@@ -1,0 +1,34 @@
+프로젝트 구조 설명 
+(2021.11.05, 작성자 : 조혜근)
+
+VideoToFrame.ipynb : 
+프로젝트 내의 동영상 (sample.mp4)을 읽어
+frames 폴더에 프레임 단위의 이미지(100000.jpg, 100001.jpg, 100002.jpg...)로 저장합니다.
+
+PlusImage.ipynb :
+frames 폴더의 프레임 단위의 이미지 (100000.jpg, 100001.jpg, 100002.jpg ...), 
+faces 폴더의 얼굴 이미지 (100000_face0.jpg, 100000_face1.jpg, 100000_face2.jpg, 100001_face0.jpg, 100001_face1.jpg ...),
+프로젝트 내의 얼굴 좌표인 face_cordinate.txt 를 입력으로 받아
+frames 폴더에 얼굴을 합성하여 프레임 단위의 이미지(100000.jpg, 100001.jpg, 100002.jpg...)로 저장합니다.
+
+FrameToVideo.ipynb :
+frames 폴더의 합성된 얼굴의 프레임(100000.jpg, 100001.jpg, 100002.jpg...)을 입력으로 받아서
+프로젝트 내에 비식별화 완료된 영상인 result.mp4로 저장합니다.
+ 
+
+
+
+sample.mp4 : 비식별화를 진행할 원본 동영상
+
+result.mp4 : 비식별화 완료한 결과 동영상
+
+face_coordinate.txt : 얼굴들의 좌상단 x좌표, y좌표를 저장하는 텍스트 파일
+
+frames 폴더 : VideoToFrame.ipynb에서 프레임을 저장하는 폴더
+
+faces 폴더 : 비식별화 전, 후의 얼굴 이미지를 저장하는 폴더
+
+
+TODO
+result.mp4에 원본 영상의 오디오를 반영해야 합니다.
+파이프라인이 모두 완성되었을 때 합쳐야 합니다.
