@@ -98,3 +98,29 @@ def uv_tex(img, ver_lst, tri, uv_h=256, uv_w=256, uv_c=3, show_flag=False, wfp=N
         plot_image(res)
 
     return res
+
+def uv_tex_single(img, ver_lst, tri, uv_h=256, uv_w=256, uv_c=3, show_flag=False, wfp=None):
+    uv_coords = process_uv(g_uv_coords.copy(), uv_h=uv_h, uv_w=uv_w)
+
+    res_lst = []
+    for ver_ in ver_lst:
+        ver = _to_ctype(ver_.T)  # transpose to m x 3
+        colors = bilinear_interpolate(img, ver[:, 0], ver[:, 1]) / 255.
+        print(colors)
+        # `rasterize` here serves as texture sampling, may need to optimization
+        res = rasterize(uv_coords, tri, colors, height=uv_h, width=uv_w, channel=uv_c)
+        res_lst.append(res)
+
+    # concat if there more than one image
+    res = np.concatenate(res_lst, axis=1) if len(res_lst) > 1 else res_lst[0]
+    if wfp is not None:
+        wfp = wfp.split('.jpg')[0]
+        for cnt in range(len(res_lst)):
+            outname = wfp+str(cnt+1)+'.jpg'
+            cv2.imwrite(outname, res_lst[cnt])
+            print(f'Save visualization result to {outname}')
+
+    if show_flag:
+        plot_image(res)
+
+    return res
