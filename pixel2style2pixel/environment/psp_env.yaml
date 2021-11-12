@@ -1,0 +1,35 @@
+name: psp_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - _libgcc_mutex
+  - ca-certificates
+  - certifi
+  - libedit
+  - libffi
+  - libgcc-ng
+  - libstdcxx-ng
+  - ncurses
+  - ninja
+  - openssl
+  - pip
+  - python=3.7.0
+  - python_abi
+  - readline
+  - setuptools
+  - sqlite
+  - tk
+  - wheel
+  - xz
+  - zlib
+  - pip:
+    - scipy
+    - matplotlib
+    - tqdm
+    - numpy
+    - opencv-python
+    - pillow
+    - tensorboard
+prefix: ~/anaconda3/envs/psp_env
+
