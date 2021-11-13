@@ -1,0 +1,1 @@
+python scripts/style_mixing.py --exp_dir=experiment/ --checkpoint_path=psp_ffhq_encode.pt --data_path=test_data/ --test_batch_size=3 --test_workers=6 --n_outputs_to_generate=5 --latent_mask=5,6,7,8 --mix_alpha=0.6

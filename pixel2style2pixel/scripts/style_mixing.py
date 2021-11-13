@@ -61,6 +61,7 @@ def run():
 		opts.n_images = len(dataset)
 
 	global_i = 0
+	vecs_to_inject = np.random.randn(opts.n_outputs_to_generate, 512).astype('float32')
 	for input_batch in tqdm(dataloader):
 		if global_i >= opts.n_images:
 			break
@@ -68,7 +69,7 @@ def run():
 			input_batch = input_batch.cuda()
 			for image_idx, input_image in enumerate(input_batch):
 				# generate random vectors to inject into input image
-				vecs_to_inject = np.random.randn(opts.n_outputs_to_generate, 512).astype('float32')
+				#vecs_to_inject = np.random.randn(opts.n_outputs_to_generate, 512).astype('float32')	#random value that inject to style
 				multi_modal_outputs = []
 				for vec_to_inject in vecs_to_inject:
 					cur_vec = torch.from_numpy(vec_to_inject).unsqueeze(0).to("cuda")
