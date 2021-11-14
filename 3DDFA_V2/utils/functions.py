@@ -6,6 +6,7 @@ import numpy as np
 import cv2
 from math import sqrt
 import matplotlib.pyplot as plt
+from scipy.spatial import ConvexHull
 
 RED = (0, 0, 255)
 GREEN = (0, 255, 0)
@@ -124,6 +125,14 @@ def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs)
     for i in range(len(pts)):
         if dense_flag:
             plt.plot(pts[i][0, ::6], pts[i][1, ::6], 'o', markersize=0.4, color='c', alpha=0.7)
+
+            #볼록껍질 구해서 표시
+            pt = np.transpose(pts[i][0:2, ::6])
+            hull = ConvexHull(pt)
+            for simplex in hull.simplices:
+                plt.plot(pt[simplex,0], pt[simplex,1], 'r--')
+                plt.plot(pt[simplex,0], pt[simplex,1], 'ro')
+                
         else:
             alpha = 0.8
             markersize = 4

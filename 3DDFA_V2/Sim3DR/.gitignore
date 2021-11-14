@@ -6,3 +6,4 @@ build/
 data/
 
 lib/rasterize.cpp
+Sim3DR_Cython.cp36-win_amd64.pyd
