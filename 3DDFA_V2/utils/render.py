@@ -50,3 +50,24 @@ def render(img, ver_lst, tri, alpha=0.6, show_flag=False, wfp=None, with_bg_flag
         plot_image(res)
 
     return res
+
+
+#텍스처 렌더링
+def render_with_t(img, ver_lst, tri, tex, show_flag=False, wfp=None):
+
+    overlap = img.copy()
+
+    for ver_ in ver_lst:
+        ver = _to_ctype(ver_.T)  # transpose
+        overlap = render_app(ver, tri, overlap, texture=tex)
+
+    res = overlap
+
+    if wfp is not None:
+        cv2.imwrite(wfp, res)
+        print(f'Save visualization result to {wfp}')
+
+    if show_flag:
+        plot_image(res)
+
+    return res
