@@ -84,14 +84,15 @@ def main(args):
     new_suffix = f'.{args.opt}' if args.opt in ('ply', 'obj') else '.jpg'
     wfp = f'examples/results/{args.img_fp.split("/")[-1].replace(old_suffix, "")}_{args.opt}' + new_suffix
     ver_lst = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
-    ser_to_obj_single(img, pose_lst, ver_lst, tddfa.tri, height=img.shape[0], wfp=wfp)
+    ser_to_obj_single(img, ver_lst, tddfa.tri, height=img.shape[0], wfp=wfp)
 
     
 
     print(boxes)
-    tex = get_colors(img, ver_lst[0])
+    tex = [get_colors(img, ver_lst[x]) for x in range(len(ver_lst))]
     background = np.zeros((img.shape[0],img.shape[1],3), np.uint8)
-    render_with_t(background, ver_lst, tddfa.tri, tex, show_flag=True)
+    render_with_texture_multiple(background, ver_lst, tddfa.tri, tex, show_flag=True)
+    render_with_texture_single(background, ver_lst[1], tddfa.tri, tex[1], show_flag=True)
     
 
 
