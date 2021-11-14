@@ -1,3 +1,5 @@
 .idea/
 __pycache__
 **/__pycache__
+cpu_nms.cp36-win_and64.pyd
+cpu_nms.cp38-win_and64.pyd
