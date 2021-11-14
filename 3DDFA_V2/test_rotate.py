@@ -92,7 +92,8 @@ def main(args):
     tex = [get_colors(img, ver_lst[x]) for x in range(len(ver_lst))]
     background = np.zeros((img.shape[0],img.shape[1],3), np.uint8)
     render_with_texture_multiple(background, ver_lst, tddfa.tri, tex, show_flag=True)
-    render_with_texture_single(background, ver_lst[1], tddfa.tri, tex[1], show_flag=True)
+    for v, t in zip(ver_lst, tex):
+        render_with_texture_single(background, v, tddfa.tri, t, show_flag=True)
     
 
 
