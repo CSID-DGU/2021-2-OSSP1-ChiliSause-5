@@ -9,7 +9,7 @@ import yaml
 
 from FaceBoxes import FaceBoxes
 from TDDFA import TDDFA
-from utils.render import render
+from utils.render import *
 #from utils.render_ctypes import render  # faster
 from utils.depth import depth
 from utils.pncc import pncc
@@ -54,13 +54,13 @@ def main(args):
 
     # Visualization and serialization
     
-    args.opt = 'uv_tex'
-    dense_flag = args.opt in ('2d_dense', '3d', 'depth', 'pncc', 'uv_tex', 'ply', 'obj')
-    old_suffix = get_suffix(args.img_fp)
-    new_suffix = f'.{args.opt}' if args.opt in ('ply', 'obj') else '.jpg'
-    wfp = f'examples/results/{args.img_fp.split("/")[-1].replace(old_suffix, "")}_{args.opt}' + new_suffix
-    ver_lst = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
-    uv_tex_single(img, ver_lst, tddfa.tri, show_flag=False, wfp=wfp)
+    # args.opt = 'uv_tex'
+    # dense_flag = args.opt in ('2d_dense', '3d', 'depth', 'pncc', 'uv_tex', 'ply', 'obj')
+    # old_suffix = get_suffix(args.img_fp)
+    # new_suffix = f'.{args.opt}' if args.opt in ('ply', 'obj') else '.jpg'
+    # wfp = f'examples/results/{args.img_fp.split("/")[-1].replace(old_suffix, "")}_{args.opt}' + new_suffix
+    # ver_lst = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
+    # tex = uv_tex_single(img, ver_lst, tddfa.tri, show_flag=False, wfp=wfp)
 
     #포즈 계산
     pose_lst = []
@@ -70,6 +70,14 @@ def main(args):
         print(f'yaw: {pose[0]:.1f}, pitch: {pose[1]:.1f}, roll: {pose[2]:.1f}')
         pose_lst.append(pose)
 
+    args.opt = '2d_dense'
+    dense_flag = args.opt in ('2d_dense', '3d', 'depth', 'pncc', 'uv_tex', 'ply', 'obj')
+    old_suffix = get_suffix(args.img_fp)
+    new_suffix = f'.{args.opt}' if args.opt in ('ply', 'obj') else '.jpg'
+    wfp = f'examples/results/{args.img_fp.split("/")[-1].replace(old_suffix, "")}_{args.opt}' + new_suffix
+    ver_lst = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
+    draw_landmarks(img, ver_lst, show_flag=args.show_flag, dense_flag=dense_flag, wfp=wfp)
+
     args.opt = 'obj'
     dense_flag = args.opt in ('2d_dense', '3d', 'depth', 'pncc', 'uv_tex', 'ply', 'obj')
     old_suffix = get_suffix(args.img_fp)
@@ -77,6 +85,17 @@ def main(args):
     wfp = f'examples/results/{args.img_fp.split("/")[-1].replace(old_suffix, "")}_{args.opt}' + new_suffix
     ver_lst = tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
     ser_to_obj_single(img, pose_lst, ver_lst, tddfa.tri, height=img.shape[0], wfp=wfp)
+
+    
+
+    print(boxes)
+    tex = get_colors(img, ver_lst[0])
+    background = np.zeros((img.shape[0],img.shape[1],3), np.uint8)
+    render_with_t(background, ver_lst, tddfa.tri, tex, show_flag=True)
+    
+
+
+
 
 
 if __name__ == '__main__':
