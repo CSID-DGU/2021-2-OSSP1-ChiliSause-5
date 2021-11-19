@@ -184,8 +184,7 @@ def run(self):
 
 
 
-<<<<<<< HEAD
-=======
+
 def run():
 	test_opts = TestOptions().parse()
 
@@ -264,7 +263,7 @@ def run():
 					res = np.concatenate([res, np.array(output.resize(resize_amount))], axis=1)
 				Image.fromarray(res).save(os.path.join(mixed_path_results, os.path.basename(input_im_path)))
 				global_i += 1
->>>>>>> main
+
 
 
 if __name__ == '__main__':
