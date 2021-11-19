@@ -122,6 +122,7 @@ def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs)
 
     if not type(pts) in [tuple, list]:
         pts = [pts]
+    outlines = []
     for i in range(len(pts)):
         if dense_flag:
             plt.plot(pts[i][0, ::6], pts[i][1, ::6], 'o', markersize=0.4, color='c', alpha=0.7)
@@ -129,9 +130,10 @@ def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs)
             #볼록껍질 구해서 표시
             pt = np.transpose(pts[i][0:2, ::6])
             hull = ConvexHull(pt)
-            for simplex in hull.simplices:
-                plt.plot(pt[simplex,0], pt[simplex,1], 'r--')
-                plt.plot(pt[simplex,0], pt[simplex,1], 'ro')
+            outlines.insert(hull.simplices)
+            # for simplex in hull.simplices:
+            #     plt.plot(pt[simplex,0], pt[simplex,1], 'r--')
+            #     plt.plot(pt[simplex,0], pt[simplex,1], 'ro')
                 
         else:
             alpha = 0.8
@@ -163,6 +165,7 @@ def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs)
 
     if show_flag:
         plt.show()
+    return 0
 
 
 def cv_draw_landmark(img_ori, pts, box=None, color=GREEN, size=1):

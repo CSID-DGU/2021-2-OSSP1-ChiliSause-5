@@ -24,6 +24,9 @@ def euler_rotate(yaw, pitch, roll):
     rotMat = np.dot(Rz_yaw, np.dot(Ry_pitch, Rx_roll))
     return rotMat
 
+def euler_translate(x, y, z):
+    pass
+
 def rotate(vertics, yaw, pitch, roll):
     #vertex와 회전값 입력
     rotated_vertics = np.dot(euler_rotate(yaw, pitch, roll),vertics)
