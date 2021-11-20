@@ -66,6 +66,7 @@ def matrix2angle(R):
 def calc_pose(param):
     P = param[:12].reshape(3, -1)  # camera matrix
     s, R, t3d = P2sRt(P)
+    print(P)
     P = np.concatenate((R, t3d.reshape(3, -1)), axis=1)  # without scale
     pose = matrix2angle(R)
     pose = [p * 180 / np.pi for p in pose]

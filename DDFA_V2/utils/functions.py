@@ -130,7 +130,7 @@ def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs)
             #볼록껍질 구해서 표시
             pt = np.transpose(pts[i][0:2, ::6])
             hull = ConvexHull(pt)
-            outlines.insert(hull.simplices)
+            outlines.append(hull.simplices)
             # for simplex in hull.simplices:
             #     plt.plot(pt[simplex,0], pt[simplex,1], 'r--')
             #     plt.plot(pt[simplex,0], pt[simplex,1], 'ro')

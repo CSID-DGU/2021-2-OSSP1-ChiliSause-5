@@ -81,6 +81,10 @@ def render_with_texture_single(img, ver_, tri, tex, show_flag=False, wfp=None):
 
     res = overlap
 
+    #이미지 자르기
+    res = res[int(ver_[1].min()):int(ver_[1].max())
+            , int(ver_[0].min()):int(ver_[0].max())].copy()
+
     if wfp is not None:
         cv2.imwrite(wfp, res)
         print(f'Save visualization result to {wfp}')
