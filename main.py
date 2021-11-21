@@ -1,20 +1,22 @@
 import DDFA_V2
 from DDFA_V2.DDFA import DDFA
 from pixel2style2pixel.scripts.style_mixing import StyleMix
-
+import matplotlib.pyplot as plt
 import cv2
 import VideoToFrame
 import PlusImage
 import FrameToVideo
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 
 
-
-#ddfa = DDFA()
+ddfa = DDFA()
 StyleGan = StyleMix()
 
 if __name__ == "__main__":
     #pipeline1 : sample.mp4파일을 입력으로 받아, OriginalFrame에 프레임을 저장한다.
-    #OriginalFrame=VideoToFrame.VideoToFrame()
+    OriginalFrame=VideoToFrame.VideoToFrame()
 
     """
     for img in OriginalFrame: 
@@ -22,19 +24,51 @@ if __name__ == "__main__":
         cv2.waitKey(0)
         cv2.destroyAllWindows()
     """
+    roi_box_lst, outlines, frontImages = ddfa.get_faces(frame=OriginalFrame[0])
+    # img=frontImages[0]
+    # height, width = img.shape[:2]
+    # plt.figure(figsize=(12, height / width * 12))
 
+    # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    # plt.axis('off')
 
-    #for currentFrame in OriginalFrame:
-        # pipeline2
-        #roi_box_lst, outlines, frontImages = ddfa.get_faces(frame=currentFrame)
-        
-        #piplen3: deidentification by StylrGan
-        # StyleGan.set_faceImgInput(frontImages)      #stylegan input setting
-        # StyleGan.mix()                              #run stylegan
-        # deIdentificationImgArr = StyleGan.get_face()#stylegan output
-        
-        #styleGan .pt file
-        #https://drive.google.com/file/d/1bMTNWkh5LArlaWSc_wa8VKyq2V42T2z0/view
+    # plt.imshow(img[..., ::-1])
+    # plt.show()
+    # print(frontImages[0].shape)
+    # input()
+
+#     #piplen3: deidentification by StyleGan
+    StyleGan.set_faceImgInput(frontImages)      #stylegan input setting
+    StyleGan.mix()                              #run stylegan
+    deIdentificationImgArr = StyleGan.get_face()#stylegan output
+    
+    # img=deIdentificationImgArr[0]
+    # height, width = img.shape[:2]
+    # plt.figure(figsize=(12, height / width * 12))
+
+    # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    # plt.axis('off')
+
+    # plt.imshow(img[..., ::-1])
+    # plt.show()
+    # print(img.shape)
+    # input()
+    
+    #pipeline4
+    ddfa.restore_faces(deIdentificationImgArr)
+
+    # for currentFrame in OriginalFrame:
+    #     #pipeline2
+    #     roi_box_lst, outlines, frontImages = ddfa.get_faces(frame=currentFrame)
+    #     plt.imshow(frontImages[0])
+    #     cv2.imshow('test',frontImages[0])
+    #     print(frontImages[0])
+
+    #     #piplen3: deidentification by StyleGan
+    #     # StyleGan.set_faceImgInput(frontImages)      #stylegan input setting
+    #     # StyleGan.mix()                              #run stylegan
+    #     # deIdentificationImgArr = StyleGan.get_face()#stylegan output
+    #     # StyleGan.show_face()
 
     
     

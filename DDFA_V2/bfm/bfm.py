@@ -21,7 +21,7 @@ def _to_ctype(arr):
 
 class BFMModel(object):
     def __init__(self, bfm_fp, shape_dim=40, exp_dim=10):
-        bfm = _load(bfm_fp)
+        bfm = _load(make_abs_path('../'+bfm_fp))
         self.u = bfm.get('u').astype(np.float32)  # fix bug
         self.w_shp = bfm.get('w_shp').astype(np.float32)[..., :shape_dim]
         self.w_exp = bfm.get('w_exp').astype(np.float32)[..., :exp_dim]

@@ -7,6 +7,7 @@ from PIL import Image
 import torch
 from torch.utils.data import DataLoader
 import sys
+import cv2
 
 # sys.path.append(".")
 # sys.path.append("..")
@@ -19,13 +20,8 @@ from ..models.psp import pSp
 
 class StyleMix:
 	def __init__(self):
-		self.imgArr
 		self.img_output_arr = []
-
-	def mix(self):
-
 		test_opts = TestOptions().parse()
-
 		if test_opts.resize_factors is not None:
 			factors = test_opts.resize_factors.split(',')
 			assert len(factors) == 1, "When running inference, please provide a single downsampling factor!"
@@ -37,69 +33,77 @@ class StyleMix:
 
 		# update test options with options used during training
 		ckpt = torch.load(test_opts.checkpoint_path, map_location='cpu')
-		opts = ckpt['opts']
-		opts.update(vars(test_opts))
-		if 'learn_in_w' not in opts:
-			opts['learn_in_w'] = False
-		if 'output_size' not in opts:
-			opts['output_size'] = 1024
-		opts = Namespace(**opts)
+		self.opts = ckpt['opts']
+		self.opts.update(vars(test_opts))
+		if 'learn_in_w' not in self.opts:
+			self.opts['learn_in_w'] = False
+		if 'output_size' not in self.opts:
+			self.opts['output_size'] = 1024
+		self.opts = Namespace(**(self.opts))
 
-		net = pSp(opts)
-		net.eval()
-		net.cuda()
+		self.net = pSp(self.opts)
+		self.net.eval()
+		self.net.cuda()
 
-		print('Loading dataset for {}'.format(opts.dataset_type))
-		dataset_args = data_configs.DATASETS[opts.dataset_type]
-		transforms_dict = dataset_args['transforms'](opts).get_transforms()
+	def mix(self):
+		print('Loading dataset for {}'.format(self.opts.dataset_type))
+		dataset_args = data_configs.DATASETS[self.opts.dataset_type]
+		transforms_dict = dataset_args['transforms'](self.opts).get_transforms()
 		dataset = InferenceDataset(imgArr=self.imgArr,
 								transform=transforms_dict['transform_inference'],
-								opts=opts)
+								opts=self.opts)
 		dataloader = DataLoader(dataset,
-								batch_size=opts.test_batch_size,
+								batch_size=self.opts.test_batch_size,
 								shuffle=False,
-								num_workers=int(opts.test_workers),
+								num_workers=int(self.opts.test_workers),
 								drop_last=True)
 
-		latent_mask = [int(l) for l in opts.latent_mask.split(",")]
-		if opts.n_images is None:
-			opts.n_images = len(dataset)
+		latent_mask = [int(l) for l in self.opts.latent_mask.split(",")]
+		if self.opts.n_images is None:
+			self.opts.n_images = len(dataset)
 
 		global_i = 0
 
 		output_arr = []
 		for input_batch in tqdm(dataloader):
-			if global_i >= opts.n_images:
+			if global_i >= self.opts.n_images:
 				break
 			with torch.no_grad():
 				input_batch = input_batch.cuda()
 				for image_idx, input_image in enumerate(input_batch):
 					# generate random vectors to inject into input image
-					vecs_to_inject = np.random.randn(opts.n_outputs_to_generate, 512).astype('float32')
-					multi_modal_outputs = []
+					vecs_to_inject = np.random.randn(self.opts.n_outputs_to_generate, 512).astype('float32')
+					#multi_modal_outputs = []
 					for vec_to_inject in vecs_to_inject:
 						cur_vec = torch.from_numpy(vec_to_inject).unsqueeze(0).to("cuda")
 						# get latent vector to inject into our input image
-						_, latent_to_inject = net(cur_vec,
+						_, latent_to_inject = self.net(cur_vec,
 												input_code=True,
 												return_latents=True)
-						# get output image with injected style vector
-						res = net(input_image.unsqueeze(0).to("cuda").float(),
+						#get output image with injected style vector
+						res = self.net(input_image.unsqueeze(0).to("cuda").float(),
 								latent_mask=latent_mask,
 								inject_latent=latent_to_inject,
-								alpha=opts.mix_alpha,
-								resize=opts.resize_outputs)
+								alpha=self.opts.mix_alpha,
+								resize=self.opts.resize_outputs)
 						output_arr.append((res[0]))
 
 					for output in output_arr:
 						output = tensor2im(output)
+						output = np.array(output)
 						self.img_output_arr.append(output)
+
 
 	def set_faceImgInput(self, imgArr): #Input from 3DDFA(img array for all img inputs)
 		self.imgArr = imgArr
 
 	def get_face(self):	#Output that goes out to 3DDFA(img array for all img inputs)
 		return self.img_output_arr
+
+	def show_face(self):
+		for img in self.img_output_arr:
+			print(img.shape)
+			cv2.imshow(img)
 
 def run():
 	test_opts = TestOptions().parse()

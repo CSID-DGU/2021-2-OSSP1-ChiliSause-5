@@ -33,6 +33,7 @@ class InferenceDataset(Dataset):
 
 	def __getitem__(self, index):
 		from_im = self.imgArr[index]
+		from_im = Image.fromarray(from_im)
 		from_im = from_im.convert('RGB') if self.opts.label_nc == 0 else from_im.convert('L')
 		if self.transform:
 			from_im = self.transform(from_im)

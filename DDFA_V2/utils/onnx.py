@@ -3,6 +3,7 @@
 __author__ = 'cleardusk'
 
 import sys
+import os.path as osp
 
 sys.path.append('..')
 
@@ -10,6 +11,7 @@ import torch
 from .. import models
 from .tddfa_util import load_model
 
+make_abs_path = lambda fn: osp.join(osp.dirname(osp.realpath(__file__)), fn)
 
 def convert_to_onnx(**kvs):
     # 1. load model
@@ -20,7 +22,7 @@ def convert_to_onnx(**kvs):
         size=size,
         mode=kvs.get('mode', 'small')
     )
-    checkpoint_fp = kvs.get('checkpoint_fp')
+    checkpoint_fp = make_abs_path('../'+kvs.get('checkpoint_fp'))
     model = load_model(model, checkpoint_fp)
     model.eval()
 

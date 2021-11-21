@@ -54,7 +54,7 @@ class TDDFA(object):
             size=self.size,
             mode=kvs.get('mode', 'small')
         )
-        model = load_model(model, kvs.get('checkpoint_fp'))
+        model = load_model(model, make_abs_path(kvs.get('checkpoint_fp')))
 
         if self.gpu_mode:
             cudnn.benchmark = True
