@@ -69,12 +69,14 @@ class DDFA:
         for param in param_lst:
             P, pose = calc_pose(param)
             pose_lst.append(pose)
-            print(f'yaw: {pose[0]:.1f}, pitch: {pose[1]:.1f}, roll: {pose[2]:.1f}')
-            pose_lst.append(pose)
-        self.before_pos_lst = pose_lst.deepcopy()
+            #print(f'yaw: {pose[0]:.1f}, pitch: {pose[1]:.1f}, roll: {pose[2]:.1f}')
+
+        #이전 리스트 기록
+        self.before_pos_lst = pose_lst[:]
+
         for i in range(len(ver_lst)):
-            print(pose_lst[i])
-            ver_lst[i] = rotate_v(ver_lst[i], yaw=-pose_lst[i][0], pitch=0, roll=0)
+            #print(pose_lst[i])
+            ver_lst[i] = rotate_v(ver_lst[i], yaw=pose_lst[i][2], pitch=-pose_lst[i][0], roll=pose_lst[i][1])
 
         #렌더링
         #render_with_texture_multiple(background, ver_lst, self.tddfa.tri, tex, show_flag=True)
@@ -136,7 +138,7 @@ if __name__ == "__main__":
     t = euler_translate(0,0,0)
 
     ddfa = DDFA()
-    img = cv2.imread("examples/inputs/people.jpg")
+    img = cv2.imread("examples/inputs/images/people.jpg")
     roi, outl, frontImages = ddfa.get_faces(img)
     print(roi)
     pass

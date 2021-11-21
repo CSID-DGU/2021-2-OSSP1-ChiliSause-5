@@ -38,7 +38,7 @@ def euler_translate(x, y, z):
     return move
 
 def meanofp(axis):
-    return axis.sum()/axis.size
+    return (axis.min()+axis.max())/2
 
 #vertex와 회전값 입력
 #vertex 입력 형식
