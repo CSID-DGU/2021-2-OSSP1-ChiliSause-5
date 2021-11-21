@@ -7,14 +7,14 @@ import numpy as np
 import cv2
 import onnxruntime
 
-from utils.onnx import convert_to_onnx
-from utils.io import _load
-from utils.functions import (
+from .utils.onnx import convert_to_onnx
+from .utils.io import _load
+from .utils.functions import (
     crop_img, parse_roi_box_from_bbox, parse_roi_box_from_landmark,
 )
-from utils.tddfa_util import _parse_param, similar_transform
-from bfm.bfm import BFMModel
-from bfm.bfm_onnx import convert_bfm_to_onnx
+from .utils.tddfa_util import _parse_param, similar_transform
+from .bfm.bfm import BFMModel
+from .bfm.bfm_onnx import convert_bfm_to_onnx
 
 make_abs_path = lambda fn: osp.join(osp.dirname(osp.realpath(__file__)), fn)
 
@@ -27,6 +27,8 @@ class TDDFA_ONNX(object):
 
         # load onnx version of BFM
         bfm_fp = kvs.get('bfm_fp', make_abs_path('configs/bfm_noneck_v3.pkl'))
+        bfm_fp = make_abs_path('configs/bfm_noneck_v3.pkl')
+        print(bfm_fp)
         bfm_onnx_fp = bfm_fp.replace('.pkl', '.onnx')
         if not osp.exists(bfm_onnx_fp):
             convert_bfm_to_onnx(
@@ -51,7 +53,7 @@ class TDDFA_ONNX(object):
         )
 
         onnx_fp = kvs.get('onnx_fp', kvs.get('checkpoint_fp').replace('.pth', '.onnx'))
-
+        onnx_fp = make_abs_path(onnx_fp)
         # convert to onnx online if not existed
         if onnx_fp is None or not osp.exists(onnx_fp):
             print(f'{onnx_fp} does not exist, try to convert the `.pth` version to `.onnx` online')

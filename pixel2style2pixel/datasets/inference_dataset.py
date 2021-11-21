@@ -1,6 +1,6 @@
 from torch.utils.data import Dataset
 from PIL import Image
-from utils import data_utils
+from ..utils import data_utils
 
 
 class InferenceDataset(Dataset):

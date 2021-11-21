@@ -125,7 +125,7 @@ def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs)
     outlines = []
     for i in range(len(pts)):
         if dense_flag:
-            plt.plot(pts[i][0, ::6], pts[i][1, ::6], 'o', markersize=0.4, color='c', alpha=0.7)
+            #plt.plot(pts[i][0, ::6], pts[i][1, ::6], 'o', markersize=0.4, color='c', alpha=0.7)
 
             #볼록껍질 구해서 표시
             pt = np.transpose(pts[i][0:2, ::6])

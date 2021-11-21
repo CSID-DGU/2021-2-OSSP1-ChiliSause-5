@@ -3,40 +3,40 @@ import sys
 import argparse
 import cv2
 import yaml
-from utils.rotate_vertices import *
+from .utils.rotate_vertices import *
 import copy
-from FaceBoxes import FaceBoxes
-from TDDFA import TDDFA
-from utils.render import *
+from .FaceBoxes import FaceBoxes
+from .TDDFA import TDDFA
+from .utils.render import *
 #from utils.render_ctypes import render  # faster
-from utils.depth import depth
-from utils.pncc import pncc
-from utils.uv import *
-from utils.pose import *
-from utils.serialization import ser_to_ply, ser_to_obj
-from utils.serialization import *
-from utils.functions import draw_landmarks, get_suffix
-from utils.tddfa_util import str2bool
+from .utils.depth import depth
+from .utils.pncc import pncc
+from .utils.uv import *
+from .utils.pose import *
+from .utils.serialization import ser_to_ply, ser_to_obj
+from .utils.serialization import *
+from .utils.functions import draw_landmarks, get_suffix
+from .utils.tddfa_util import str2bool
 
 
 class DDFA:
     def __init__(self):
 
-        cfg = yaml.load(open('configs/mb1_120x120.yml'), Loader=yaml.SafeLoader)
+        cfg = yaml.load(open('./DDFA_V2/configs/mb1_120x120.yml'), Loader=yaml.SafeLoader)
         self.before_pos_lst = []
         # Init FaceBoxes and TDDFA, recommend using onnx flag
-        if True:
+        if False:
             import os
             os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
             os.environ['OMP_NUM_THREADS'] = '4'
 
-            from FaceBoxes.FaceBoxes_ONNX import FaceBoxes_ONNX
-            from TDDFA_ONNX import TDDFA_ONNX
+            from .FaceBoxes.FaceBoxes_ONNX import FaceBoxes_ONNX
+            from .TDDFA_ONNX import TDDFA_ONNX
 
             self.face_boxes = FaceBoxes_ONNX()
             self.tddfa = TDDFA_ONNX(**cfg)
         else:
-            gpu_mode = args.mode == 'gpu'
+            gpu_mode = True#args.mode == 'gpu'
             tddfa = TDDFA(gpu_mode=gpu_mode, **cfg)
             face_boxes = FaceBoxes()
     
@@ -81,7 +81,7 @@ class DDFA:
         #렌더링
         #render_with_texture_multiple(background, ver_lst, self.tddfa.tri, tex, show_flag=True)
         for v, t in zip(ver_lst, tex):
-            out = render_with_texture_single(background, v, self.tddfa.tri, t, show_flag=True)
+            out = render_with_texture_single(background, v, self.tddfa.tri, t, show_flag=False)
             frontImages.append(out)
 
         #param_lst, roi_box_lst = self.tddfa(out, boxes)
@@ -111,7 +111,7 @@ class DDFA:
         ver_lst = self.tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
         outlines = draw_landmarks(frame, ver_lst, show_flag=False, dense_flag=dense_flag, wfp=None)
 
-        rotatedface = []
+        restoreImages = []
 
         #이미지에서 텍스쳐 추출
         tex = [get_colors(frame, ver_lst[x]) for x in range(len(ver_lst))]
@@ -119,19 +119,19 @@ class DDFA:
 
         
         for i in range(len(ver_lst)):
-            ver_lst[i] = rotate_v(ver_lst[i], yaw=-self.before_pos_lst[i][0], pitch=self.before_pos_lst[i][1], roll=self.before_pos_lst[i][2])
+            ver_lst[i] = rotate_v(ver_lst[i], yaw=-self.before_pos_lst[i][2], pitch=self.before_pos_lst[i][0], roll=-self.before_pos_lst[i][1])
 
         #렌더링
         #render_with_texture_multiple(background, ver_lst, self.tddfa.tri, tex, show_flag=True)
         for v, t in zip(ver_lst, tex):
             out = render_with_texture_single(background, v, self.tddfa.tri, t, show_flag=True)
-            rotatedface.append(out)
+            restoreImages.append(out)
 
         #param_lst, roi_box_lst = self.tddfa(out, boxes)
         #for box in roi_box_lst:
         #    frontImages.append(out[int(box[1]):int(box[3]),
         #                         int(box[0]):int(box[2])].copy())
-        return roi_box_lst, outlines, frontImages
+        return roi_box_lst, outlines, restoreImages
 
 
 if __name__ == "__main__":

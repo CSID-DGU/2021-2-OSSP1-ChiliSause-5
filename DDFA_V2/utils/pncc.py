@@ -10,10 +10,10 @@ import cv2
 import numpy as np
 import os.path as osp
 
-from Sim3DR import rasterize
-from utils.functions import plot_image
-from utils.io import _load, _dump
-from utils.tddfa_util import _to_ctype
+from ..Sim3DR import rasterize
+from .functions import plot_image
+from .io import _load, _dump
+from .tddfa_util import _to_ctype
 
 make_abs_path = lambda fn: osp.join(osp.dirname(osp.realpath(__file__)), fn)
 
