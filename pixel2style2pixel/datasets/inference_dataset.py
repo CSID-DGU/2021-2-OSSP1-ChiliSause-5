@@ -1,3 +1,4 @@
+from numpy.core.fromnumeric import shape
 from torch.utils.data import Dataset
 from PIL import Image
 from ..utils import data_utils

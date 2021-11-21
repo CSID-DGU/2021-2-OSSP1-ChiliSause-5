@@ -73,7 +73,7 @@ def render_with_texture_multiple(img, ver_lst, tri, tex_lst, show_flag=False, wf
 
     return res
 
-def render_with_texture_single(img, ver_, tri, tex, show_flag=False, wfp=None):
+def render_with_texture_single(img, ver_, tri, tex, show_flag=False, wfp=None, isBefore=True):
     overlap = img.copy()
 
     ver = _to_ctype(ver_.T)  # transpose
@@ -82,8 +82,12 @@ def render_with_texture_single(img, ver_, tri, tex, show_flag=False, wfp=None):
     res = overlap
 
     #이미지 자르기
-    res = res[int(ver_[1].min())-10:int(ver_[1].max()+10)
-            , int(ver_[0].min())-10:int(ver_[0].max())+10].copy()
+    if isBefore:
+        res = res[int(ver_[1].min())-10:int(ver_[1].max()+10)
+                , int(ver_[0].min())-10:int(ver_[0].max())+10].copy()
+    else:
+        res = res[int(ver_[1].min()):int(ver_[1].max())
+                , int(ver_[0].min()):int(ver_[0].max())].copy()
 
     if wfp is not None:
         cv2.imwrite(wfp, res)

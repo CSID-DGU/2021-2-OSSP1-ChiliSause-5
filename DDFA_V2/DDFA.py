@@ -103,7 +103,7 @@ class DDFA:
     #입력: 비식별화 된 이미지 배열, 출력: 원래 각도로 돌려진 이미지 배열
     def restore_faces(self, faces):
         restoreImages = []
-        for face in faces:
+        for current_i, face in enumerate(faces):
             frame = face
             
             # Detect faces, get 3DMM params and roi boxes
@@ -124,17 +124,22 @@ class DDFA:
             
             #이미지에서 텍스쳐 추출
             tex = [get_colors(frame, ver_lst[x]) for x in range(len(ver_lst))]
+            #배경 생성
             background = np.zeros((frame.shape[0],frame.shape[1],3), np.uint8)
-
+            for x in background:
+                for y in x:
+                    y[0] = 0
+                    y[1] = 177
+                    y[2] = 64
             
             for i in range(len(ver_lst)):
-                ver_lst[i] = rotate_v(ver_lst[i], yaw=-self.before_pos_lst[i][2], pitch=self.before_pos_lst[i][0], roll=-self.before_pos_lst[i][1])
+                ver_lst[i] = rotate_v(ver_lst[i], yaw=-self.before_pos_lst[current_i][2], pitch=self.before_pos_lst[current_i][0], roll=-self.before_pos_lst[current_i][1])
 
 
             #렌더링
             #render_with_texture_multiple(background, ver_lst, self.tddfa.tri, tex, show_flag=True)
             for v, t in zip(ver_lst, tex):
-                out = render_with_texture_single(background, v, self.tddfa.tri, t, show_flag=False)
+                out = render_with_texture_single(background, v, self.tddfa.tri, t, show_flag=False, isBefore=False)
                 restoreImages.append(out)
 
         #param_lst, roi_box_lst = self.tddfa(out, boxes)

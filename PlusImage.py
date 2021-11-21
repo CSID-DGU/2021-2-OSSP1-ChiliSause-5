@@ -1,39 +1,28 @@
 """
 각 프레임에 얼굴을 합성하는 코드
-
-input data : 100000+N.jpg, 100000+N_faceM.jpg, face_coordinate.txt
-output data : 100000+N.jpg
 """
-def PlusImage():
+def PlusImage(OriginalFrame, roi_box_lst, restoreImages):
     import cv2
     import numpy as np
     import os.path                 
     from PIL import Image
-    i=0
-
-    f = open("./face_coordinate.txt", 'r')
-    while 1:
-        fileNum=100000+i
-        fileName = "./frames/"+str(fileNum)+".jpg"
-        if not os.path.isfile(fileName):
-            break
-        img = cv2.imread(fileName, 1)
     
-        j=0
-        while 1:
-            faceName="./faces/"+str(fileNum)+"_face"+str(j)+".jpg"
-            if not os.path.isfile(faceName):
-                break
-            x=int(f.readline())
-            y=int(f.readline())
-            width=int(f.readline())
-            height=int(f.readline())
-            print(faceName,x,y,width,height)
-            face = cv2.imread(faceName, 1)
+    returnFrame=[]
+    roi_box_lst = np.array(roi_box_lst)
+    restoreImages = np.array(restoreImages)
+    OriginalFrame = np.array(OriginalFrame)
+    print(len(OriginalFrame))
+    for i in range(0,len(OriginalFrame)) :
+        img=OriginalFrame[i]
+        for j in range(0,len(restoreImages[i])):
+            x=int(roi_box_lst[i][j][0])
+            y=int(roi_box_lst[i][j][1])
+            width=int(roi_box_lst[i][j][2])-int(roi_box_lst[i][j][0])
+            height=int(roi_box_lst[i][j][3])-int(roi_box_lst[i][j][1])
+            face=restoreImages[i][j]
             face=cv2.resize(face,dsize=(width,height),interpolation=cv2.INTER_AREA)
             h, w, c = face.shape
             roi = img[y:y+h, x:x+w]
-       
             img1 = face
             img2 = roi
             height1, width1 = img1.shape[:2]
@@ -55,11 +44,15 @@ def PlusImage():
             fg = cv2.bitwise_and(img1, img1, mask=mask_inv)
             bg = cv2.bitwise_and(roi, roi, mask=mask)
             img2[y:h, x:w] = fg + bg
-            face=img2
-            #img[y:y+h, x:x+w] = face
-            j+=1    
-        cv2.imwrite(fileName, img)   
-        i+=1
-    
+            face=img2         
+        returnFrame.append(img)   
     cv2.waitKey(0)
     cv2.destroyAllWindows()
+    
+    return returnFrame
+                
+                
+                
+        
+
+        

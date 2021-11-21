@@ -14,7 +14,7 @@ def FrameToVideo():
     import moviepy
     import moviepy.editor
 
-    resultFps=10
+    resultFps=1
     img_array = []
     for filename in glob.glob('./frames/*.jpg'):
         img = cv2.imread(filename)

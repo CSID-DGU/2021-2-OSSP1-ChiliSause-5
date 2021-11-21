@@ -115,11 +115,11 @@ def plot_image(img):
 
 def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs):
     """Draw landmarks using matplotlib"""
-    height, width = img.shape[:2]
-    plt.figure(figsize=(12, height / width * 12))
-    plt.imshow(img[..., ::-1])
-    plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-    plt.axis('off')
+    # height, width = img.shape[:2]
+    # plt.figure(figsize=(12, height / width * 12))
+    # plt.imshow(img[..., ::-1])
+    # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+    # plt.axis('off')
 
     dense_flag = kwargs.get('dense_flag')
 
@@ -129,14 +129,16 @@ def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs)
     for i in range(len(pts)):
         if dense_flag:
             #plt.plot(pts[i][0, ::6], pts[i][1, ::6], 'o', markersize=0.4, color='c', alpha=0.7)
-
+            outlines.append(np.empty((0,2), int))
             #볼록껍질 구해서 표시
             pt = np.transpose(pts[i][0:2, ::6])
             hull = ConvexHull(pt)
             outlines.append(hull.simplices)
-            # for simplex in hull.simplices:
-            #     plt.plot(pt[simplex,0], pt[simplex,1], 'r--')
-            #     plt.plot(pt[simplex,0], pt[simplex,1], 'ro')
+            #for simplex in hull.simplices:
+            #    outlines[i] = np.append(outlines[i], np.array([[pt[simplex,0]], [pt[simplex,1]]]), axis=1)
+                #plt.plot(pt[simplex,0], pt[simplex,1], 'r--')
+                #plt.plot(pt[simplex,0], pt[simplex,1], 'ro')
+            # print(outlines)
                 
         else:
             alpha = 0.8
@@ -168,7 +170,7 @@ def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs)
 
     if show_flag:
         plt.show()
-    return 0
+    return outlines
 
 
 def cv_draw_landmark(img_ori, pts, box=None, color=GREEN, size=1):
