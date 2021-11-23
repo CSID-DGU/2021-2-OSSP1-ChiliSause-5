@@ -46,7 +46,7 @@ class StyleMix:
 		self.net.cuda()
 
 	def mix(self):
-		print('Loading dataset for {}'.format(self.opts.dataset_type))
+		#print('Loading dataset for {}'.format(self.opts.dataset_type))
 		dataset_args = data_configs.DATASETS[self.opts.dataset_type]
 		transforms_dict = dataset_args['transforms'](self.opts).get_transforms()
 		dataset = InferenceDataset(imgArr=self.imgArr,
@@ -66,7 +66,7 @@ class StyleMix:
 
 		output_arr = []
 		self.img_output_arr.clear()
-		for input_batch in tqdm(dataloader):
+		for input_batch in dataloader:
 			if global_i >= self.opts.n_images:
 				break
 			with torch.no_grad():
@@ -89,17 +89,25 @@ class StyleMix:
 								resize=self.opts.resize_outputs)
 						output_arr.append((res[0]))
 
-				for output in output_arr:
-					output = tensor2im(output)
-					output = np.array(output)
-					self.img_output_arr.append(output)
+				# for output in output_arr:
+				# 	output = tensor2im(output)
+				# 	output = np.array(output)
+				# 	self.img_output_arr.append(output)
+					
+				#resize_amount = (256, 256) if self.opts.resize_outputs else (self.opts.output_size, self.opts.output_size)
+				
+				res = tensor2im(output_arr[0])
+				self.res = np.array(res)
+				for i in range(1,len(output_arr)):
+					output = tensor2im(output_arr[i])
+					self.res = np.concatenate([res, np.array(output)], axis=1)	
 
 
 	def set_faceImgInput(self, imgArr): #Input from 3DDFA(img array for all img inputs)
 		self.imgArr = imgArr
 
 	def get_face(self):	#Output that goes out to 3DDFA(img array for all img inputs)
-		return self.img_output_arr
+		return self.res
 
 	def show_face(self):
 		for img in self.img_output_arr:

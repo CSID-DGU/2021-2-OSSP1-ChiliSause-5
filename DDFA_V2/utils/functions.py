@@ -129,11 +129,14 @@ def draw_landmarks(img, pts, style='fancy', wfp=None, show_flag=False, **kwargs)
     for i in range(len(pts)):
         if dense_flag:
             #plt.plot(pts[i][0, ::6], pts[i][1, ::6], 'o', markersize=0.4, color='c', alpha=0.7)
-            outlines.append(np.empty((0,2), int))
             #볼록껍질 구해서 표시
             pt = np.transpose(pts[i][0:2, ::6])
             hull = ConvexHull(pt)
-            outlines.append(hull.simplices)
+            
+            hull_indices = np.unique(hull.simplices.flat)
+            hull_pts = pt[hull_indices, :]
+
+            outlines.append(hull_pts.T)
             #for simplex in hull.simplices:
             #    outlines[i] = np.append(outlines[i], np.array([[pt[simplex,0]], [pt[simplex,1]]]), axis=1)
                 #plt.plot(pt[simplex,0], pt[simplex,1], 'r--')

@@ -49,7 +49,7 @@ class DDFA:
         if n == 0:
             print(f'No face detected, exit')
             sys.exit(-1)
-        print(f'Detect {n} faces')
+        # print(f'Detect {n} faces')
 
         param_lst, roi_box_lst = self.tddfa(frame, boxes)
 
@@ -98,6 +98,13 @@ class DDFA:
         #for box in roi_box_lst:
         #    frontImages.append(out[int(box[1]):int(box[3]),
         #                         int(box[0]):int(box[2])].copy())
+
+        # print(roi_box_lst)
+        roi_box_lst = []
+        for i, outline in enumerate(outlines):
+            roi_box_lst.append([outline[0].min(), outline[1].min(), outline[0].max(), outline[1].max()] )
+        # print(roi_box_lst)
+
         return roi_box_lst, outlines, frontImages
 
     #입력: 비식별화 된 이미지 배열, 출력: 원래 각도로 돌려진 이미지 배열
@@ -112,7 +119,7 @@ class DDFA:
             if n == 0:
                 print(f'No face detected, exit')
                 sys.exit(-1)
-            print(f'Detect {n} faces')
+            # print(f'Detect {n} faces')
 
             param_lst, roi_box_lst = self.tddfa(frame, boxes)
 

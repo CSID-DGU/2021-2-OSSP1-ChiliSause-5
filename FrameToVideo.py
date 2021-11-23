@@ -6,7 +6,7 @@ input data : sample.mp4, frameN.jpg
 output data : result.mp4
 """
 
-def FrameToVideo():
+def FrameToVideo(returnFrame):
     import cv2
     import numpy as np
     import glob
@@ -16,8 +16,8 @@ def FrameToVideo():
 
     resultFps=1
     img_array = []
-    for filename in glob.glob('./frames/*.jpg'):
-        img = cv2.imread(filename)
+    for i in returnFrame:
+        img = i
         height, width, layers = img.shape
         size = (width,height)
         img_array.append(img)
