@@ -65,6 +65,7 @@ def PlusImage1(OriginalFrame, roi_box_lst, restoreImages):
     from PIL import Image
     from preprocessing import PreProcessing
     from kernel import Poisson
+    from tqdm.std import tqdm
     
     pre = PreProcessing()
             
@@ -73,9 +74,21 @@ def PlusImage1(OriginalFrame, roi_box_lst, restoreImages):
     restoreImages = np.array(restoreImages)
     OriginalFrame = np.array(OriginalFrame)
     print(len(OriginalFrame))
-    for i, img in enumerate(OriginalFrame):
+    for i, img in enumerate(tqdm(OriginalFrame)):
         for j, face in enumerate(restoreImages[i]):
-            
+            # cv2.imshow('img', img)
+            # cv2.waitKey(10)
+            # cv2.destroyAllWindows()
+            x=int(roi_box_lst[i][j][0])
+            y=int(roi_box_lst[i][j][1])
+            width=int(roi_box_lst[i][j][2])-int(roi_box_lst[i][j][0])
+            height=int(roi_box_lst[i][j][3])-int(roi_box_lst[i][j][1])
+            centerX=x+width/2
+            centerY=y+height/2
+            face=cv2.resize(face,dsize=(width,height),interpolation=cv2.INTER_AREA)       
+            # cv2.imshow('face', face)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
             chromakey = face[:10, :10, :]
             offset = 20
             hsv_chroma = cv2.cvtColor(chromakey, cv2.COLOR_BGR2HSV)
@@ -85,18 +98,28 @@ def PlusImage1(OriginalFrame, roi_box_lst, restoreImages):
             upper = np.array([chroma_h.max()+offset, 255, 255])
             mask = cv2.inRange(hsv_img, lower, upper)
             mask_inv = cv2.bitwise_not(mask)
-
-
             mask = mask_inv                              #마스크(grascale필수, 흑,백 => 흑/안보이게, 백/부분만 추출),src의 마스크
-            xy = (120,100)                                                                                              #dst의 복사 중심좌표 (y,x)
+
+            fx=width-12
+            fy=height-12
+            mask = cv2.resize(mask, dsize=(fx,fy),interpolation=cv2.INTER_NEAREST)
+            mask = cv2.copyMakeBorder(mask, 6,6,6,6, cv2.BORDER_CONSTANT, value=0)
+            
+            # selectedImg = cv2.copyTo(face, mask)
+            # cv2.imshow('select_mask', selectedImg)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
+
+            xy = (centerY,centerX)
+            # xy = (120,100)                                                                                              #dst의 복사 중심좌표 (y,x)
             pre.selectMask(face, img, mask)                                                                                #마스크에 대한 처리 진행
             #pre.select(src, dst)
 
             #retImg = Poisson.seamlessClone(src, dst, pre.selectedMask, pre.selectedPoint, Poisson.MIXED_CLONE)
-            retImg = Poisson.seamlessClone(face,img,mask,xy,Poisson.MIXED_CLONE)
-            cv2.imshow('result', retImg)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+            img = Poisson.seamlessClone(face,img,mask,xy,Poisson.NORMAL_CLONE)
+            # cv2.imshow('result', img)
+            # cv2.waitKey(0)
+            # cv2.destroyAllWindows()
 
             
             

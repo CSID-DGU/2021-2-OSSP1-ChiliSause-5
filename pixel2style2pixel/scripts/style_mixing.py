@@ -45,6 +45,9 @@ class StyleMix:
 		self.net.eval()
 		self.net.cuda()
 
+		# generate random vectors to inject into input image
+		self.vecs_to_inject = np.random.randn(self.opts.n_outputs_to_generate, 512).astype('float32')
+
 	def mix(self):
 		#print('Loading dataset for {}'.format(self.opts.dataset_type))
 		dataset_args = data_configs.DATASETS[self.opts.dataset_type]
@@ -72,10 +75,8 @@ class StyleMix:
 			with torch.no_grad():
 				input_batch = input_batch.cuda()
 				for image_idx, input_image in enumerate(input_batch):
-					# generate random vectors to inject into input image
-					vecs_to_inject = np.random.randn(self.opts.n_outputs_to_generate, 512).astype('float32')
 					#multi_modal_outputs = []
-					for vec_to_inject in vecs_to_inject:
+					for vec_to_inject in self.vecs_to_inject:
 						cur_vec = torch.from_numpy(vec_to_inject).unsqueeze(0).to("cuda")
 						# get latent vector to inject into our input image
 						_, latent_to_inject = self.net(cur_vec,
@@ -89,25 +90,26 @@ class StyleMix:
 								resize=self.opts.resize_outputs)
 						output_arr.append((res[0]))
 
-				# for output in output_arr:
-				# 	output = tensor2im(output)
-				# 	output = np.array(output)
-				# 	self.img_output_arr.append(output)
+				for output in output_arr:
+					output = tensor2im(output)
+					output = np.array(output)
+					self.img_output_arr.append(output)
 					
 				#resize_amount = (256, 256) if self.opts.resize_outputs else (self.opts.output_size, self.opts.output_size)
 				
-				res = tensor2im(output_arr[0])
-				self.res = np.array(res)
-				for i in range(1,len(output_arr)):
-					output = tensor2im(output_arr[i])
-					self.res = np.concatenate([res, np.array(output)], axis=1)	
+				# res = tensor2im(output_arr[0])
+				# self.res = np.array(res)
+				# for i in range(1,len(output_arr)):
+				# 	output = tensor2im(output_arr[i])
+				# 	self.res = np.concatenate([res, np.array(output)], axis=1)	
 
 
 	def set_faceImgInput(self, imgArr): #Input from 3DDFA(img array for all img inputs)
 		self.imgArr = imgArr
 
 	def get_face(self):	#Output that goes out to 3DDFA(img array for all img inputs)
-		return self.res
+		return self.img_output_arr
+		# return self.res
 
 	def show_face(self):
 		for img in self.img_output_arr:

@@ -8,7 +8,7 @@ output data : 100000+N.jpg
 def VideoToFrame():
     import cv2
 
-    resultFps=1
+    resultFps=15
     returnImage=[]
     vidcap = cv2.VideoCapture('./sample.mp4')
 

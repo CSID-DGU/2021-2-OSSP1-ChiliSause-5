@@ -15,6 +15,11 @@ class Poisson:
         # 암묵적으로 지정한 위치 찾기
         xbegin, xend, ybegin, yend = np.min(inner[0])-1, np.max(inner[0]) + 2,\
             np.min(inner[1])-1, np.max(inner[1])+2
+
+        if(xbegin<1):
+            xbegin = 1
+        if(ybegin<1):
+            ybegin = 1
         cutMask = mask[xbegin:xend, ybegin:yend]
         cutSrc = src[xbegin:xend, ybegin:yend]
         cutLap = laplacian[xbegin:xend, ybegin:yend]
@@ -34,8 +39,8 @@ class Poisson:
         reSrc = np.zeros_like(dst)
         reLap = np.zeros_like(dst, dtype=np.float64)
         xbegin, xend, ybegin, yend = \
-            point[0]-minPoint[0], cutMask.shape[0]+point[0]-minPoint[0], \
-            point[1]-minPoint[1], cutMask.shape[1]+point[1]-minPoint[1]
+            int(point[0]-minPoint[0]), int(cutMask.shape[0]+point[0]-minPoint[0]), \
+            int(point[1]-minPoint[1]), int(cutMask.shape[1]+point[1]-minPoint[1])
         reMask[xbegin:xend, ybegin:yend] = cutMask
         reSrc[xbegin:xend, ybegin:yend] = cutSrc
         reLap[xbegin:xend, ybegin:yend] = cutLap

@@ -21,7 +21,7 @@ class TestOptions:
 		# arguments for style-mixing script
 		self.parser.add_argument('--n_images', type=int, default=None, help='Number of images to output. If None, run on all data')
 		self.parser.add_argument('--n_outputs_to_generate', type=int, default=1, help='Number of outputs to generate per input image.')
-		self.parser.add_argument('--mix_alpha', type=float, default=0.7, help='Alpha value for style-mixing')
+		self.parser.add_argument('--mix_alpha', type=float, default=0.8, help='Alpha value for style-mixing')
 		self.parser.add_argument('--latent_mask', type=str, default="5,8", help='Comma-separated list of latents to perform style-mixing with')
 
 		# arguments for super-resolution
