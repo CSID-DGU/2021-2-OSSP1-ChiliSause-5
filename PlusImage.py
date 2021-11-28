@@ -85,7 +85,10 @@ def PlusImage1(OriginalFrame, roi_box_lst, restoreImages):
             height=int(roi_box_lst[i][j][3])-int(roi_box_lst[i][j][1])
             centerX=x+width/2
             centerY=y+height/2
-            face=cv2.resize(face,dsize=(width,height),interpolation=cv2.INTER_AREA)       
+            try:
+                face=cv2.resize(face,dsize=(width,height),interpolation=cv2.INTER_AREA) 
+            except:
+                continue
             # cv2.imshow('face', face)
             # cv2.waitKey(0)
             # cv2.destroyAllWindows()
@@ -100,10 +103,10 @@ def PlusImage1(OriginalFrame, roi_box_lst, restoreImages):
             mask_inv = cv2.bitwise_not(mask)
             mask = mask_inv                              #마스크(grascale필수, 흑,백 => 흑/안보이게, 백/부분만 추출),src의 마스크
 
-            fx=width-12
-            fy=height-12
+            fx=width-8
+            fy=height-8
             mask = cv2.resize(mask, dsize=(fx,fy),interpolation=cv2.INTER_NEAREST)
-            mask = cv2.copyMakeBorder(mask, 6,6,6,6, cv2.BORDER_CONSTANT, value=0)
+            mask = cv2.copyMakeBorder(mask, 4,4,4,4, cv2.BORDER_CONSTANT, value=0)
             
             # selectedImg = cv2.copyTo(face, mask)
             # cv2.imshow('select_mask', selectedImg)

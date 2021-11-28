@@ -155,6 +155,67 @@ class DDFA:
         #                         int(box[0]):int(box[2])].copy())
         return roi_box_lst, outlines, restoreImages
 
+    #입력: 비식별화 된 이미지 배열, 출력: 원래 각도로 돌려진 이미지 배열
+    def restore_faces_(self, faces, boxcnt):
+        restoreImages = []
+
+        frame = faces
+        # Detect faces, get 3DMM params and roi boxes
+        
+        # boxes = self.face_boxes(frame)
+        height = faces.shape[0]
+        boxes = []
+        for i in range(boxcnt):
+            boxes.append([height*i, 0, height*(i+1), height, 1])
+
+        n = boxcnt
+        if n == 0:
+            print(f'No face detected, exit')
+            sys.exit(-1)
+
+        param_lst, roi_box_lst = self.tddfa(frame, boxes)
+
+        #외곽선 점들 추출
+        dense_flag = True
+        ver_lst = self.tddfa.recon_vers(param_lst, roi_box_lst, dense_flag=dense_flag)
+        outlines = draw_landmarks(frame, ver_lst, show_flag=False, dense_flag=dense_flag, wfp=None)
+
+        frontImages = []
+
+        #이미지에서 텍스쳐 추출
+        tex = [get_colors(frame, ver_lst[x]) for x in range(len(ver_lst))]
+
+        #배경 생성
+        background = np.zeros((frame.shape[0],frame.shape[1],3), np.uint8)
+        for x in background:
+            for y in x:
+                y[0] = 0
+                y[1] = 177
+                y[2] = 64
+        
+
+        #이전 리스트 기록
+        for i in range(len(ver_lst)):
+            ver_lst[i] = rotate_v(ver_lst[i], yaw=-self.before_pos_lst[i][2], pitch=self.before_pos_lst[i][0], roll=-self.before_pos_lst[i][1])
+
+        #렌더링
+        #render_with_texture_multiple(background, ver_lst, self.tddfa.tri, tex, show_flag=True)
+        for v, t in zip(ver_lst, tex):
+            out = render_with_texture_single(background, v, self.tddfa.tri, t, show_flag=False, isBefore=False)
+            restoreImages.append(out)
+        
+        #param_lst, roi_box_lst = self.tddfa(out, boxes)
+        #for box in roi_box_lst:
+        #    frontImages.append(out[int(box[1]):int(box[3]),
+        #                         int(box[0]):int(box[2])].copy())
+
+        # print(roi_box_lst)
+        roi_box_lst = []
+        for i, outline in enumerate(outlines):
+            roi_box_lst.append([outline[0].min(), outline[1].min(), outline[0].max(), outline[1].max()] )
+        # print(roi_box_lst)
+
+        return roi_box_lst, outlines, restoreImages
 
 if __name__ == "__main__":
     t = euler_translate(0,0,0)

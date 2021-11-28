@@ -61,10 +61,16 @@ if __name__ == "__main__":
         #piplen3: deidentification by StyleGan
         StyleGan.set_faceImgInput(frontImages)      #stylegan input setting
         StyleGan.mix()                              #run stylegan
-        deIdentificationImgArr = StyleGan.get_face()#stylegan output
-
+        deIdentificationImgArr, ouput_len = StyleGan.get_face()#stylegan output
+        # height, width = deIdentificationImgArr.shape[:2]
+        # plt.figure(figsize=(12, height / width * 12))
+        # plt.imshow(deIdentificationImgArr[..., ::-1])
+        # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+        # plt.axis('off')
+        # plt.show()
         #pipeline4
-        roi_box_lst_, outlines, restoreImages=ddfa.restore_faces(deIdentificationImgArr)
+        roi_box_lst_, outlines, restoreImages = ddfa.restore_faces_(deIdentificationImgArr, ouput_len)
+        # roi_box_lst_, outlines, restoreImages=ddfa.restore_faces(deIdentificationImgArr)
         
         # for res in restoreImages:
         #     print(res.shape)

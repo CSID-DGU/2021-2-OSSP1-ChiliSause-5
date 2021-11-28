@@ -9,6 +9,11 @@ from torch.utils.data import DataLoader
 import sys
 import cv2
 
+
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
+
 # sys.path.append(".")
 # sys.path.append("..")
 
@@ -21,6 +26,7 @@ from ..models.psp import pSp
 class StyleMix:
 	def __init__(self):
 		self.img_output_arr = []
+		self.output_size = 0
 		test_opts = TestOptions().parse()
 		if test_opts.resize_factors is not None:
 			factors = test_opts.resize_factors.split(',')
@@ -90,26 +96,43 @@ class StyleMix:
 								resize=self.opts.resize_outputs)
 						output_arr.append((res[0]))
 
-				for output in output_arr:
-					output = tensor2im(output)
-					output = np.array(output)
-					self.img_output_arr.append(output)
+				# for output in output_arr:
+				# 	output = tensor2im(output)
+				# 	output = np.array(output)
+				# 	self.img_output_arr.append(output)
 					
 				#resize_amount = (256, 256) if self.opts.resize_outputs else (self.opts.output_size, self.opts.output_size)
 				
-				# res = tensor2im(output_arr[0])
-				# self.res = np.array(res)
+				res = tensor2im(output_arr[0])
+				self.res = np.array(res)
+				self.output_size = len(output_arr)
+				for i in range(1,self.output_size):
+					output = tensor2im(output_arr[i])
+					self.res = np.concatenate([self.res, np.array(output)], axis=1)					
 				# for i in range(1,len(output_arr)):
 				# 	output = tensor2im(output_arr[i])
-				# 	self.res = np.concatenate([res, np.array(output)], axis=1)	
+				# 	self.res = np.concatenate([res, np.array(output.resize(resize_amount))], axis=1)	
+
+
+				# input_im_path = dataset.paths[global_i]
+				# image = input_batch[image_idx]
+				# input_image = log_input_image(image, opts)
+				# resize_amount = (256, 256) if opts.resize_outputs else (opts.output_size, opts.output_size)
+				# res = np.array(input_image.resize(resize_amount))
+				# for output in multi_modal_outputs:
+				# 	output = tensor2im(output)
+				# 	res = np.concatenate([res, np.array(output.resize(resize_amount))], axis=1)
+				# Image.fromarray(res).save(os.path.join(mixed_path_results, os.path.basename(input_im_path)))
+				# global_i += 1
+
 
 
 	def set_faceImgInput(self, imgArr): #Input from 3DDFA(img array for all img inputs)
 		self.imgArr = imgArr
 
 	def get_face(self):	#Output that goes out to 3DDFA(img array for all img inputs)
-		return self.img_output_arr
-		# return self.res
+		#return self.img_output_arr
+		return self.res, self.output_size
 
 	def show_face(self):
 		for img in self.img_output_arr:
@@ -181,19 +204,19 @@ class StyleMix:
 # 					          inject_latent=latent_to_inject,
 # 					          alpha=opts.mix_alpha,
 # 							  resize=opts.resize_outputs)
-# 					multi_modal_outputs.append(res[0])
+				# 	multi_modal_outputs.append(res[0])
 
-# 				# visualize multi modal outputs
-# 				input_im_path = dataset.paths[global_i]
-# 				image = input_batch[image_idx]
-# 				input_image = log_input_image(image, opts)
-# 				resize_amount = (256, 256) if opts.resize_outputs else (opts.output_size, opts.output_size)
-# 				res = np.array(input_image.resize(resize_amount))
-# 				for output in multi_modal_outputs:
-# 					output = tensor2im(output)
-# 					res = np.concatenate([res, np.array(output.resize(resize_amount))], axis=1)
-# 				Image.fromarray(res).save(os.path.join(mixed_path_results, os.path.basename(input_im_path)))
-# 				global_i += 1
+				# # visualize multi modal outputs
+				# input_im_path = dataset.paths[global_i]
+				# image = input_batch[image_idx]
+				# input_image = log_input_image(image, opts)
+				# resize_amount = (256, 256) if opts.resize_outputs else (opts.output_size, opts.output_size)
+				# res = np.array(input_image.resize(resize_amount))
+				# for output in multi_modal_outputs:
+				# 	output = tensor2im(output)
+				# 	res = np.concatenate([res, np.array(output.resize(resize_amount))], axis=1)
+				# Image.fromarray(res).save(os.path.join(mixed_path_results, os.path.basename(input_im_path)))
+				# global_i += 1
 
 
 
