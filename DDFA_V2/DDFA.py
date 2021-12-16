@@ -46,9 +46,9 @@ class DDFA:
         # Detect faces, get 3DMM params and roi boxes
         boxes = self.face_boxes(frame)
         n = len(boxes)
-        if n == 0:
-            print(f'No face detected, exit')
-            sys.exit(-1)
+        # if n == 0:
+        #     print(f'No face detected, exit')
+        #     sys.exit(-1)
         # print(f'Detect {n} faces')
 
         param_lst, roi_box_lst = self.tddfa(frame, boxes)
@@ -110,15 +110,17 @@ class DDFA:
     #입력: 비식별화 된 이미지 배열, 출력: 원래 각도로 돌려진 이미지 배열
     def restore_faces(self, faces):
         restoreImages = []
+        roi_box_lst = []
+        outlines = []
         for current_i, face in enumerate(faces):
             frame = face
             
             # Detect faces, get 3DMM params and roi boxes
             boxes = self.face_boxes(frame)
             n = len(boxes)
-            if n == 0:
-                print(f'No face detected, exit')
-                sys.exit(-1)
+            # if n == 0:
+            #     print(f'No face detected, exit')
+            #     sys.exit(-1)
             # print(f'Detect {n} faces')
 
             param_lst, roi_box_lst = self.tddfa(frame, boxes)

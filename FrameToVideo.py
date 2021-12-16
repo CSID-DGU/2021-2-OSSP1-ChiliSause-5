@@ -14,7 +14,7 @@ def FrameToVideo(returnFrame):
     import moviepy
     import moviepy.editor
 
-    resultFps=15
+    resultFps=1
     img_array = []
     for i in returnFrame:
         img = i

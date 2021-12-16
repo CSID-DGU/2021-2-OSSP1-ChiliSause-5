@@ -44,9 +44,12 @@ class StyleMix:
 		self.net = pSp(self.opts)
 		self.net.eval()
 		self.net.cuda()
-
+		
+		self.is_one=False
 		# generate random vectors to inject into input image
 		self.vecs_to_inject = np.random.randn(self.opts.n_outputs_to_generate, 512).astype('float32')
+
+
 
 	def mix(self):
 		#print('Loading dataset for {}'.format(self.opts.dataset_type))
@@ -94,6 +97,9 @@ class StyleMix:
 					output = tensor2im(output)
 					output = np.array(output)
 					self.img_output_arr.append(output)
+					if self.is_one:
+						self.is_one=False
+						return
 					
 				#resize_amount = (256, 256) if self.opts.resize_outputs else (self.opts.output_size, self.opts.output_size)
 				
@@ -105,7 +111,14 @@ class StyleMix:
 
 
 	def set_faceImgInput(self, imgArr): #Input from 3DDFA(img array for all img inputs)
+		# if(len(imgArr)==1):
+		# 	self.imgArr = imgArr
+		# 	self.imgArr.append(cv2.copyTo(imgArr[0]))
+		# 	self.is_one=True
+		# else:
 		self.imgArr = imgArr
+		# if(len(imgArr)>0):
+		# 	self.opts.test_batch_size = len(imgArr)
 
 	def get_face(self):	#Output that goes out to 3DDFA(img array for all img inputs)
 		return self.img_output_arr

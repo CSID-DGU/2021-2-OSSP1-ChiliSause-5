@@ -7,11 +7,17 @@ import matplotlib.pyplot as plt
 import cv2
 import VideoToFrame
 import PlusImage
+import Plusimage_old
+import evaluation
 import FrameToVideo
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
+import time
+
+
+start = time.time()
 
 ddfa = DDFA()
 StyleGan = StyleMix()
@@ -57,12 +63,19 @@ if __name__ == "__main__":
         # cv2.imshow('test',frontImages[0])
         # print(frontImages[0])
         #roi_box_lst = outlineToroi(outlines)
-        
+
+        #print(len(frontImages))
         #piplen3: deidentification by StyleGan
         StyleGan.set_faceImgInput(frontImages)      #stylegan input setting
         StyleGan.mix()                              #run stylegan
         deIdentificationImgArr = StyleGan.get_face()#stylegan output
-
+        #print(len(deIdentificationImgArr))
+        # height, width = deIdentificationImgArr[0].shape[:2]
+        # plt.figure(figsize=(12, height / width * 12))
+        # plt.imshow(deIdentificationImgArr[0][..., ::-1])
+        # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+        # plt.axis('off')
+        # plt.show()
         #pipeline4
         roi_box_lst_, outlines, restoreImages=ddfa.restore_faces(deIdentificationImgArr)
         
@@ -105,6 +118,7 @@ if __name__ == "__main__":
     cv2.destroyAllWindows()
     """
     returnFrame_=PlusImage.PlusImage1(OriginalFrame, roi_box_lst_arr, restoreImages_arr)
+    #returnFrame_=Plusimage_old.PlusImage(OriginalFrame, roi_box_lst_arr, restoreImages_arr)
     
     """
     print("returnFrame length : ")
@@ -119,7 +133,9 @@ if __name__ == "__main__":
     """
     
     
-    #pipeline6
+    
+   
+    
     
     
 
@@ -127,3 +143,8 @@ if __name__ == "__main__":
     #pipeline7 : 후처리된 프레임(returnFrame_)과 원본동영상으로 결과 동영상(result.mp4)을 생성한다.
     FrameToVideo.FrameToVideo(returnFrame_)
     
+
+    # 성능평가 후 결과 출력
+    #psnr=evaluation.evaluation(OriginalFrame,returnFrame_)
+    evaluation.evaluationFace(OriginalFrame, returnFrame_, roi_box_lst_arr)
+    print("실행시간 :", time.time() - start)
