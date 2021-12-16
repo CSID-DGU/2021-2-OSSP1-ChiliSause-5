@@ -118,7 +118,7 @@ class StyleMix:
 		# else:
 		self.imgArr = imgArr
 		# if(len(imgArr)>0):
-		# 	self.opts.test_batch_size = len(imgArr)
+		#self.opts.test_batch_size = len(imgArr)
 
 	def get_face(self):	#Output that goes out to 3DDFA(img array for all img inputs)
 		return self.img_output_arr

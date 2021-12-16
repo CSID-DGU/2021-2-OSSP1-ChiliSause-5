@@ -102,9 +102,10 @@ def PlusImage1(OriginalFrame, roi_box_lst, restoreImages):
             
             fx=width-12
             fy=height-12
-            mask = cv2.resize(mask, dsize=(fx,fy),interpolation=cv2.INTER_NEAREST)
+            if(fx>0 and fy>0):
+                mask = cv2.resize(mask, dsize=(fx,fy),interpolation=cv2.INTER_NEAREST)
             
-            mask = cv2.copyMakeBorder(mask, 6,6,6,6, cv2.BORDER_CONSTANT, value=0)
+                mask = cv2.copyMakeBorder(mask, 6,6,6,6, cv2.BORDER_CONSTANT, value=0)
             cv2.imwrite("./maskTest/test.jpg",mask)
             # selectedImg = cv2.copyTo(face, mask)
             # cv2.imshow('select_mask', selectedImg)

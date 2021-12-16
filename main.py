@@ -58,24 +58,34 @@ if __name__ == "__main__":
     restoreImages_arr = []
     for currentFrame in tqdm(OriginalFrame):
         #pipeline2
+        # height, width = currentFrame.shape[:2]
+        # plt.figure(figsize=(12, height / width * 12))
+        # plt.imshow(currentFrame[..., ::-1])
+        # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+        # plt.axis('off')
+        # plt.show()
         roi_box_lst, outlines, frontImages = ddfa.get_faces(frame=currentFrame)
-        # plt.imshow(frontImages[0])
-        # cv2.imshow('test',frontImages[0])
-        # print(frontImages[0])
-        #roi_box_lst = outlineToroi(outlines)
+        # height, width = frontImages[0].shape[:2]
+        # plt.figure(figsize=(12, height / width * 12))
+        # plt.imshow(frontImages[0][..., ::-1])
+        # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+        # plt.axis('off')
+        # plt.show()
+        roi_box_lst = outlineToroi(outlines)
 
-        #print(len(frontImages))
+        print(len(frontImages))
         #piplen3: deidentification by StyleGan
         StyleGan.set_faceImgInput(frontImages)      #stylegan input setting
         StyleGan.mix()                              #run stylegan
         deIdentificationImgArr = StyleGan.get_face()#stylegan output
         #print(len(deIdentificationImgArr))
-        # height, width = deIdentificationImgArr[0].shape[:2]
-        # plt.figure(figsize=(12, height / width * 12))
-        # plt.imshow(deIdentificationImgArr[0][..., ::-1])
-        # plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-        # plt.axis('off')
-        # plt.show()
+        # for img in deIdentificationImgArr:
+        #     height, width = img.shape[:2]
+        #     plt.figure(figsize=(12, height / width * 12))
+        #     plt.imshow(img[..., ::-1])
+        #     plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
+        #     plt.axis('off')
+        #     plt.show()
         #pipeline4
         roi_box_lst_, outlines, restoreImages=ddfa.restore_faces(deIdentificationImgArr)
         
