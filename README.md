@@ -51,3 +51,14 @@ python main.py
 ## 데모
 ![original](https://user-images.githubusercontent.com/48210134/146315345-32b60d54-960a-468c-8e92-0e2c18730a0f.gif)
 ![after](https://user-images.githubusercontent.com/48210134/146315355-cca24e77-d4f3-4163-b159-2ad5b254f257.gif)
+
+## 참고자료
+https://github.com/eladrich/pixel2style2pixel fixel2fixelGAN
+
+https://github.com/cleardusk/3DDFA_V2 3DDFA
+
+https://github.com/eesxy/Poisson_Image_Editing Poisson Image Editing
+
+https://github.com/dingkeyan93/IQA-optimization  SSIM DISTS
+
+
