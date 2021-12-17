@@ -37,7 +37,7 @@ cd ..
 ```
 
 ### 2. weight 파일 다운로드
-
+https://drive.google.com/drive/folders/1s5QXnWHISyc_d2lL7XBTdQMqZcsZXqCq?usp=sharing
 
 ### 3. Input data 준비
 
