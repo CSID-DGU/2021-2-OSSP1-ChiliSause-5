@@ -49,7 +49,12 @@ python main.py
 ```
 
 ## 데모
+-원본영상
+
 ![original](https://user-images.githubusercontent.com/48210134/146315345-32b60d54-960a-468c-8e92-0e2c18730a0f.gif)
+
+-결과영상
+
 ![after](https://user-images.githubusercontent.com/48210134/146315355-cca24e77-d4f3-4163-b159-2ad5b254f257.gif)
 
 ## 참고자료
